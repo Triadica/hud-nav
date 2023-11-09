@@ -1,10 +1,54 @@
 
-{} (:package |app)
-  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.0.1)
+{} (:package |hud-nav)
+  :configs $ {} (:init-fn |hud-nav.main/main!) (:reload-fn |hud-nav.main/reload!) (:version |0.0.1)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |reel.calcit/
   :entries $ {}
   :files $ {}
-    |app.comp.container $ %{} :FileEntry
+    |hud-nav.comp $ %{} :FileEntry
+      :defs $ {}
+        |comp-hud-nav $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defcomp comp-hud-nav (tab tabs on-change)
+              div
+                {} $ :class-name style-nav
+                list-> ({})
+                  -> tabs $ map
+                    fn (pair)
+                      let
+                          t $ nth pair 0
+                          name $ nth pair 1
+                        [] t $ div
+                          {}
+                            :class-name $ str-spaced style-tab css/font-fancy!
+                            :on-click $ fn (e d!)
+                              d! $ :: :tab t (nth pair 2)
+                            :style $ if (= tab t)
+                              {} $ :color :white
+                          <> name
+        |style-nav $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defstyle style-nav $ {}
+              "\"&" $ {} (:position :absolute) (:top 12)
+        |style-tab $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defstyle style-tab $ {}
+              "\"&" $ {} (:line-height "\"1.4") (:margin-top 2) (:padding "\"0 8px") (:width :fit-content)
+                :color $ hsl 0 0 100 0.5
+                :cursor :pointer
+                :transition-duration "\"200ms"
+                :border-radius "\"4px"
+                :background-color $ hsl 0 0 0 0.2
+              "\"&:hover" $ {}
+                :background-color $ hsl 0 0 0 0.5
+                :color :white
+      :ns $ %{} :CodeEntry (:doc |)
+        :code $ quote
+          ns hud-nav.comp $ :require (respo-ui.css :as css)
+            respo.css :refer $ defstyle
+            respo.util.format :refer $ hsl
+            respo.core :refer $ defcomp defeffect <> >> div button textarea span input list->
+            respo.comp.space :refer $ =<
+    |hud-nav.comp.container $ %{} :FileEntry
       :defs $ {}
         |comp-container $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -15,33 +59,27 @@
                   cursor $ or (:cursor states) ([])
                   state $ or (:data states)
                     {} $ :content "\""
+                  tab $ :tab store
                 div
                   {} $ :class-name (str-spaced css/global css/row)
-                  textarea $ {}
-                    :value $ :content state
-                    :placeholder "\"Content"
-                    :class-name $ str-spaced css/expand css/textarea
-                    :style $ {} (:height 320)
-                    :on-input $ fn (e d!)
-                      d! cursor $ assoc state :content (:value e)
-                  =< 8 nil
-                  div
-                    {} $ :class-name css/expand
-                    <> "|This is some content with `code`"
-                    =< |8px nil
-                    button $ {} (:class-name css/button) (:inner-text "\"Run")
-                      :on-click $ fn (e d!)
-                        println $ :content state
+                  comp-hud-nav
+                    or tab $ nth (nth tabs 0) 0
+                    , tabs $ fn (next d!)
+                      d! $ :: :tab next
                   when dev? $ comp-reel (>> states :reel) reel ({})
+        |tabs $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            def tabs $ [] (:: :a |A :light) (:: :b |B :light) (:: :c |C :light)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
-          ns app.comp.container $ :require (respo-ui.css :as css)
+          ns hud-nav.comp.container $ :require (respo-ui.css :as css)
             respo.css :refer $ defstyle
             respo.core :refer $ defcomp defeffect <> >> div button textarea span input
             respo.comp.space :refer $ =<
             reel.comp.reel :refer $ comp-reel
-            app.config :refer $ dev?
-    |app.config $ %{} :FileEntry
+            hud-nav.config :refer $ dev?
+            hud-nav.comp :refer $ comp-hud-nav
+    |hud-nav.config $ %{} :FileEntry
       :defs $ {}
         |dev? $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -50,8 +88,8 @@
           :code $ quote
             def site $ {} (:storage-key "\"workflow")
       :ns $ %{} :CodeEntry (:doc |)
-        :code $ quote (ns app.config)
-    |app.main $ %{} :FileEntry
+        :code $ quote (ns hud-nav.config)
+    |hud-nav.main $ %{} :FileEntry
       :defs $ {}
         |*reel $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -102,27 +140,27 @@
             defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
-          ns app.main $ :require
+          ns hud-nav.main $ :require
             respo.core :refer $ render! clear-cache!
-            app.comp.container :refer $ comp-container
-            app.updater :refer $ updater
-            app.schema :as schema
+            hud-nav.comp.container :refer $ comp-container
+            hud-nav.updater :refer $ updater
+            hud-nav.schema :as schema
             reel.util :refer $ listen-devtools!
             reel.core :refer $ reel-updater refresh-reel
             reel.schema :as reel-schema
-            app.config :as config
+            hud-nav.config :as config
             "\"./calcit.build-errors" :default build-errors
             "\"bottom-tip" :default hud!
-    |app.schema $ %{} :FileEntry
+    |hud-nav.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def store $ {}
+            def store $ {} (:tab nil)
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)
-        :code $ quote (ns app.schema)
-    |app.updater $ %{} :FileEntry
+        :code $ quote (ns hud-nav.schema)
+    |hud-nav.updater $ %{} :FileEntry
       :defs $ {}
         |updater $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -130,9 +168,10 @@
               tag-match op
                   :states cursor s
                   update-states store cursor s
+                (:tab t) (assoc store :tab t)
                 (:hydrate-storage data) data
                 _ $ do (eprintln "\"unknown op:" op) store
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
-          ns app.updater $ :require
+          ns hud-nav.updater $ :require
             respo.cursor :refer $ update-states

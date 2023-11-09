@@ -1,29 +1,26 @@
 
-Respo workflow in Calcit-js
+Hud Nav component
 ----
 
-> Respo web page based on [calcit-js](https://github.com/calcit-lang/calcit).
-
-Demo http://repo.calcit-lang.org/respo-calcit-workflow/ .
-
-### Usages
-
-To develop:
-
-```bash
-cr --emit-js # watching
-
-yarn # to install vite
-yarn vite # watching and running on localhost:3000
+```cirru
+{}
+  :dependencies $ {}
+    |Triadica/hud-nav |main
 ```
 
-calcit-js is using [Calcit Editor](https://github.com/calcit-lang/editor).
+```cirru
+hud-nav.comp :refer $ comp-hud-nav
+```
 
-To build:
+```cirru
+comp-hud-nav tab tabs $ fn (next d!)
+    d! $ :: :tab next
+```
 
-```bash
-yarn vite build
-http-server dist/
+```cirru
+def tabs $ []
+  :: :a |A :light
+  :: :b |B :dark
 ```
 
 ### Workflow
