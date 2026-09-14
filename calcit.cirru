@@ -29,7 +29,7 @@
                         <> $ :label item
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] 'hud-nav.schema/Tab $ :: 'List 'hud-nav.schema/TabItem
+            :args $ [] 'Tag $ :: 'List 'hud-nav.schema/TabItem
         'style-nav $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-nav
             {} $ |& $ {} (:position :absolute) (:top 12)
@@ -55,7 +55,7 @@
             respo.css :refer $ defstyle
             respo.util.format :refer $ hsl
             respo.core :refer $ defcomp <> div list->
-            hud-nav.schema :refer $ Op Tab TabItem
+            hud-nav.schema :refer $ Op TabItem
     'hud-nav.comp.container $ %{} 'FileEntry
       :defs $ {} $ 'comp-container
         %{} 'CodeEntry (:doc |)
@@ -137,19 +137,15 @@
     'hud-nav.schema $ %{} 'FileEntry
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defenum Op (:tab 'hud-nav.schema/Tab) (:hydrate-storage 'Dynamic)
+          :code $ quote $ defenum Op (:tab 'Tag) (:hydrate-storage 'Dynamic)
           :examples $ []
           :schema $ :: 'Enum
         'Store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Store (:tab 'hud-nav.schema/Tab)
-          :examples $ []
-          :schema $ :: 'Enum
-        'Tab $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defenum Tab :a :b :c
+          :code $ quote $ defstruct Store (:tab 'Tag)
           :examples $ []
           :schema $ :: 'Enum
         'TabItem $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct TabItem (:id 'hud-nav.schema/Tab) (:label 'String)
+          :code $ quote $ defstruct TabItem (:id 'Tag) (:label 'String)
           :examples $ []
           :schema $ :: 'Enum
         'store $ %{} 'CodeEntry (:doc |)
