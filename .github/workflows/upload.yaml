@@ -27,12 +27,8 @@ jobs:
 
     - uses: calcit-lang/setup-calcit@ca701be5a471759e442aa053cd100720bbe1f09f # v1
 
-    # Migration note: `caps --strict` is blocked by published provider
-    # conflicts (respo-ui 0.7.19 pins respo 0.16.95 / js-ffi 0.1.12 while this
-    # project uses respo 0.16.100 / js-ffi 0.1.16). Tighten once respo-ui
-    # publishes matching ranges.
     - name: "load deps"
-      run: caps --ci && yarn install --immutable
+      run: caps --strict --ci && yarn install --immutable
 
     - name: Validate Calcit snapshot and types
       run: |

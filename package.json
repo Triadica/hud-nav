@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@calcit/procs": "0.14.16"
+    "@calcit/procs": "0.14.17"
   },
   "devDependencies": {
     "vite": "^8.0.12"
@@ -9,6 +9,6 @@
     "compile": "caps --ci && calcit calcit.cirru js",
     "release": "yarn vite build --base=./"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "packageManager": "yarn@4.12.0"
 }

@@ -3,10 +3,7 @@
   :about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --contract` before mutations; use `--full` for first orientation or changed contract digest. Manual edits must follow format and schema conventions, then run `calcit edit format`."
   :package |hud-nav
   :entries $ {} $ :default
-    {} (:description |)
-      :init-fn 'hud-nav.main/main!
-      :mode :js
-      :reload-fn 'hud-nav.main/reload!
+    {} (:description |) (:init-fn 'hud-nav.main/main!) (:mode :js) (:reload-fn 'hud-nav.main/reload!)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/
       :type-slots $ {} $ :dispatch-op |hud-nav.schema/Op
@@ -31,8 +28,7 @@
                             {} $ :color :white
                         <> $ :label item
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :return 'respo.schema/Component
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ [] 'hud-nav.schema/Tab $ :: 'List 'hud-nav.schema/TabItem
         'style-nav $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-nav
@@ -70,8 +66,7 @@
                 {} $ :class-name $ str-spaced css/global css/row
                 comp-hud-nav tab schema/tabs
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :return 'respo.schema/Component
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ [] 'hud-nav.schema/Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.comp.container
@@ -94,7 +89,7 @@
           :code $ quote $ def site
             {} $ :storage-key |workflow
           :examples $ []
-          :schema $ :: 'Map
+          :schema $ :: 'Map 'Tag 'String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.config
     'hud-nav.main $ %{} 'FileEntry
@@ -142,14 +137,11 @@
     'hud-nav.schema $ %{} 'FileEntry
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defenum Op
-            :tab 'hud-nav.schema/Tab
-            :hydrate-storage 'Dynamic
+          :code $ quote $ defenum Op (:tab 'hud-nav.schema/Tab) (:hydrate-storage 'Dynamic)
           :examples $ []
           :schema $ :: 'Enum
         'Store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Store
-            :tab 'hud-nav.schema/Tab
+          :code $ quote $ defstruct Store (:tab 'hud-nav.schema/Tab)
           :examples $ []
           :schema $ :: 'Enum
         'Tab $ %{} 'CodeEntry (:doc |)
@@ -157,9 +149,7 @@
           :examples $ []
           :schema $ :: 'Enum
         'TabItem $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct TabItem
-            :id 'hud-nav.schema/Tab
-            :label 'String
+          :code $ quote $ defstruct TabItem (:id 'hud-nav.schema/Tab) (:label 'String)
           :examples $ []
           :schema $ :: 'Enum
         'store $ %{} 'CodeEntry (:doc |)
@@ -187,8 +177,7 @@
               (:hydrate-storage data) (do data)
               _ $ do store
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :return 'hud-nav.schema/Store
+          :schema $ :: 'Fn $ {} (:return 'hud-nav.schema/Store)
             :args $ [] 'hud-nav.schema/Store 'hud-nav.schema/Op
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.updater
