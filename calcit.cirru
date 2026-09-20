@@ -121,7 +121,7 @@
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             let
-                target $ js/document.querySelector |.app
+                target $ option:unwrap $ browser/query-selector |.app
               render! target (comp-container @*store) dispatch!
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
@@ -134,6 +134,7 @@
             hud-nav.comp.container :refer $ comp-container
             hud-nav.updater :refer $ updater
             hud-nav.schema :as schema
+            js-ffi.browser :as browser
     'hud-nav.schema $ %{} 'FileEntry
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
