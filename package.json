@@ -10,5 +10,5 @@
     "release": "yarn vite build --base=./"
   },
   "version": "0.0.4",
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "yarn@4.18.0"
 }
