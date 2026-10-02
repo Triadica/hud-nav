@@ -2,11 +2,20 @@
 Hud Nav component
 ----
 
+### 当前已发布版本
+
+以下是现有版本的依赖声明，不包含下文的 Calcit 0.27 新接口。
+
 ```cirru
 {}
   :dependencies $ {}
     |Triadica/hud-nav |0.0.5
 ```
+
+### 待发布的 Calcit 0.27 接口
+
+以下示例仅对应本次迁移后的源码，**不能与上面的 `0.0.5` 搭配使用**。
+下游请等待包含本次迁移的正式版本发布后再采用，不使用 main 或提交 hash。
 
 ```cirru
 hud-nav.comp :refer $ comp-hud-nav
