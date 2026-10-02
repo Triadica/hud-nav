@@ -42,7 +42,7 @@ corepack yarn dev
 
 CI 通过 `VITE_BASE_URL=https://cos-sh.tiye.me/Triadica/hud-nav/` 指定前端 CDN，COS action v1.2.0 的 `public-base-url` 启用内置校验，不额外添加验证脚本。需要 `COS_BUCKET`、`COS_SECRET_ID`、`COS_SECRET_KEY` 和原有 `rsync_private_key`。
 
-PR 只检查与构建；main 当前提交才上传生产资源。保留原服务器目录，排队中的部署不取消。Respo/UI/js-ffi 使用已发布兼容版本，后续优先替换为兼容正式版。
+PR 只检查与构建；上传前检查提交是否仍是 main HEAD。生产部署串行，开始后不中途取消；期间到达的新提交在当前 COS 和服务器同步完成后再处理，不承诺部署时刻与 main 原子同步。保留原服务器目录。Respo/UI/js-ffi 使用已发布兼容版本，后续优先替换为兼容正式版。
 
 ### License
 
