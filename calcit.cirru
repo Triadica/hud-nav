@@ -3,7 +3,7 @@
   :about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --contract` before mutations; use `--full` for first orientation or changed contract digest. Manual edits must follow format and schema conventions, then run `calcit edit format`."
   :package |hud-nav
   :entries $ {} $ :default
-    {} (:description |) (:init-fn 'hud-nav.main/main!) (:mode :js) (:reload-fn 'hud-nav.main/reload!)
+    {} (:description |) (:init-fn 'hud-nav.main/main!) (:mode :js) (:reload-fn 'hud-nav.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/
       :type-slots $ {} $ :dispatch-op |hud-nav.schema/Op
@@ -23,7 +23,7 @@
                         {}
                           :class-name $ str-spaced style-tab css/font-fancy!
                           :on-click $ fn (e d!)
-                            d! $ :: Op :tab t
+                            d! $ %:: Op :tab t
                           :style $ if (= tab t)
                             {} $ :color :white
                         <> $ :label item
