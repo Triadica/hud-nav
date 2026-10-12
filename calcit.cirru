@@ -18,12 +18,12 @@
                 -> tabs $ map $ fn (item)
                   let
                       t $ :id item
-                    [] (turn-string t)
+                    [] (to-string t)
                       div
                         {}
                           :class-name $ str-spaced style-tab css/font-fancy!
                           :on-click $ fn (e d!)
-                            d! $ %:: Op :tab t
+                            d! $ Op :tab t
                           :style $ if (= tab t)
                             {} $ :color :white
                         <> $ :label item
@@ -101,12 +101,13 @@
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             reset! *store $ updater @*store op
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'hud-nav.schema/Op
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (render-app!)
-            add-watch *store :changes $ fn (s prev) (render-app!)
+            add-watch! *store :changes $ fn (s prev) (render-app!)
             println "|App started."
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
@@ -121,7 +122,7 @@
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             let
-                target $ option:unwrap $ browser/query-selector |.app
+                target $ .query-selector (js-cast js/document dom/DomDocument) |.app
               render! target (comp-container @*store) dispatch!
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
@@ -134,32 +135,28 @@
             hud-nav.comp.container :refer $ comp-container
             hud-nav.updater :refer $ updater
             hud-nav.schema :as schema
-            js-ffi.browser :as browser
+            respo.dom :as dom
     'hud-nav.schema $ %{} 'FileEntry
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defenum Op (:tab 'Tag) (:hydrate-storage 'Dynamic)
+          :code $ quote $ defenum Op (:tab 'Tag) (:hydrate-storage 'hud-nav.schema/Store)
           :examples $ []
-          :schema $ :: 'Enum
+          :schema $ :: 'EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store (:tab 'Tag)
           :examples $ []
-          :schema $ :: 'Enum
+          :schema $ :: 'StructDef
         'TabItem $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct TabItem (:id 'Tag) (:label 'String)
           :examples $ []
-          :schema $ :: 'Enum
+          :schema $ :: 'StructDef
         'store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def store
-            %{} Store $ :tab :a
+          :code $ quote $ def store (Store :tab :a)
           :examples $ []
           :schema $ :: 'hud-nav.schema/Store
         'tabs $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def tabs
-            []
-              %{} TabItem (:id :a) (:label |A)
-              %{} TabItem (:id :b) (:label |B)
-              %{} TabItem (:id :c) (:label |C)
+            [] (TabItem :id :a :label |A) (TabItem :id :b :label |B) (TabItem :id :c :label |C)
           :examples $ []
           :schema $ :: 'List 'hud-nav.schema/TabItem
       :ns $ %{} 'NsEntry (:doc |)
