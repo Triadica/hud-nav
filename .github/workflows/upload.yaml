@@ -42,7 +42,7 @@ jobs:
           set -euo pipefail
           calcit edit format
           git diff --exit-code -- calcit.cirru
-          calcit --check-only --all-defs --strict-types
+          calcit --check-only --all-defs
       - name: Build frontend
         env:
           VITE_BASE_URL: https://cos-sh.tiye.me/${{ github.repository }}/

@@ -4,44 +4,47 @@ Hud Nav component
 
 ### 当前已发布版本
 
+使用者影响：候选 `0.0.7` 同步正式 Calcit `0.29.3` 与正式 UI/Respo/JS-FFI 依赖图。`TabItem`、`Op`、`Store` 和 `comp-hud-nav` 两参数接口不变；demo 在 renderer 的开放回调处检查真实 `Op` 后才调用原有具名 dispatcher，不把 dispatcher 放宽成 Dynamic。候选尚未发布，消费者先固定下方现有正式 tag。
+
 以下是现有正式 tag 的依赖声明，包含下文 Calcit 0.29 接口。
 
 ```cirru
 {}
   :dependencies $ {}
-    |Triadica/hud-nav |0.0.5
+    |Triadica/hud-nav |0.0.6
 ```
 
 ### Calcit 0.29 接口（自 0.0.5 起）
 
 以下示例对应已发布的 `0.0.5` 接口，不能与旧 `0.0.4` 搭配使用。
-本分支的 `0.0.6` 仅对齐 Calcit 0.29.1、Respo 0.16.116 与 UI 0.7.35；
+本分支的候选 `0.0.7` 对齐 Calcit 0.29.3、Respo 0.16.120、UI 0.7.39 和 JS-FFI 0.2.3；
 发布前不要把候选视为已发布依赖，不使用 main 或提交 hash。
 
-```cirru
-hud-nav.comp :refer $ comp-hud-nav
-hud-nav.schema :refer $ TabItem Op
-```
+组件示例面向 JavaScript/浏览器；文档检查只静态验证，不在 native 文档 runner 中执行浏览器 CSS 宿主逻辑。
 
-```cirru
-comp-hud-nav tab tabs
-```
+```cirru.no-run
+ns app.main $ :require
+  hud-nav.comp :refer $ comp-hud-nav
+  hud-nav.schema :refer $ TabItem
 
-```cirru
-def tabs $ []
-  TabItem :id :a :label |A
-  TabItem :id :b :label |B
+let
+    tabs $ []
+      TabItem :id :a :label |A
+      TabItem :id :b :label |B
+  comp-hud-nav :a tabs
 ```
 
 `comp-hud-nav` 接收当前 Tag 和 `List<TabItem>`，点击会发送 `Op :tab next` 事件；不再接收第三个回调参数。消费项目将 `dispatch-op` 类型槽绑定到 `hud-nav.schema/Op`，在 updater 中匹配 `(:tab next)`。
 
 `Op :hydrate-storage` 接收 `Store`，而不是任意 Dynamic。外部持久化 Map 需先用 `decode-map-as data hud-nav.schema/Store` 检查，再构造该事件。
 
-当前已发布版本是 `0.0.5`；源码中的 `0.0.6` 是待发布版本。需要新的依赖组合时应等待正式 tag 发布，不引用 main 或提交 hash。
+当前已发布版本是 `0.0.6`；源码中的 `0.0.7` 是待发布版本。需要新的依赖组合时应等待正式 tag 发布，不引用 main 或提交 hash。
+
+开放 renderer 边界通过现有 Cirru EDN formatter/typed parser 检查两个变体及嵌套 Store，增加每次事件一次序列化/解析成本。它保留 `Op :tab` 和 `Op :hydrate-storage` 两条路径，不把检查成功当成 Respo 整条事件链已经完成静态类型贯通；没有新增改写规则或验证脚本。
 
 ### Workflow
 
-使用 Calcit 0.29.1、Caps 0.1.1、Node.js 24、Yarn 4.18.0：
+使用 Calcit 0.29.3、Caps 0.1.1、Node.js 24、Yarn 4.18.0：
 
 ```sh
 caps --strict --ci
