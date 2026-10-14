@@ -95,7 +95,7 @@
     'hud-nav.main $ %{} 'FileEntry
       :defs $ {}
         '*store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *store schema/store
+          :code $ quote $ defref *store schema/store
           :examples $ []
           :schema $ :: 'Ref 'hud-nav.schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
@@ -109,6 +109,7 @@
           :code $ quote $ defn main! () (render-app!)
             add-watch! *store :changes $ fn (s prev) (render-app!)
             println "|App started."
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -123,7 +124,9 @@
           :code $ quote $ defn render-app! ()
             let
                 target $ .query-selector (js-cast js/document dom/DomDocument) |.app
-              render! target (comp-container @*store) dispatch!
+              render! target (comp-container @*store)
+                fn (op)
+                  dispatch! $ parse-cirru-edn-as (format-cirru-edn op) 'hud-nav.schema/Op
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -166,10 +169,9 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op)
             match op
-              (:tab t)
-                do $ assoc store :tab t
-              (:hydrate-storage data) (do data)
-              _ $ do store
+              (:tab t) (assoc store :tab t)
+              (:hydrate-storage data) data
+              _ store
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'hud-nav.schema/Store)
             :args $ [] 'hud-nav.schema/Store 'hud-nav.schema/Op
