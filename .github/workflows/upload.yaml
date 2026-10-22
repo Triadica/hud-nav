@@ -43,10 +43,22 @@ jobs:
           calcit edit format
           git diff --exit-code -- calcit.cirru
           calcit --check-only --all-defs
+          calcit --check-only --ns hud-nav.comp --ns hud-nav.schema --summary-only
+          calcit fix --workflow strict --verify --format json | jq -e '.data.workflow.status == "passed" and .diagnostics == []'
+          calcit test --require-match
+          calcit docs check-md README.md --snapshot calcit.cirru --failures-only
       - name: Build frontend
         env:
-          VITE_BASE_URL: https://cos-sh.tiye.me/${{ github.repository }}/
+          VITE_BASE_URL: ${{ github.event_name == 'pull_request' && './' || format('https://cos-sh.tiye.me/{0}/', github.repository) }}
         run: yarn build
+      - name: Preserve frontend build for review
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: frontend
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
       - name: Check current production revision
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: production

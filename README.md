@@ -4,20 +4,20 @@ Hud Nav component
 
 ### 当前已发布版本
 
-使用者影响：候选 `0.0.7` 同步正式 Calcit `0.29.3` 与正式 UI/Respo/JS-FFI 依赖图。`TabItem`、`Op`、`Store` 和 `comp-hud-nav` 两参数接口不变；demo 在 renderer 的开放回调处检查真实 `Op` 后才调用原有具名 dispatcher，不把 dispatcher 放宽成 Dynamic。候选尚未发布，消费者先固定下方现有正式 tag。
+使用者影响：候选 `0.0.8` 同步正式 Calcit `0.30.1` 与正式 UI/Respo/JS-FFI 依赖图。`TabItem`、`Op`、`Store` 和 `comp-hud-nav` 两参数接口不变；demo 在 renderer 的开放回调处检查真实 `Op` 后才调用原有具名 dispatcher，不把 dispatcher 放宽成 Dynamic。候选尚未发布，消费者先固定下方现有正式 tag。
 
 以下是现有正式 tag 的依赖声明，包含下文 Calcit 0.29 接口。
 
 ```cirru
 {}
   :dependencies $ {}
-    |Triadica/hud-nav |0.0.6
+    |Triadica/hud-nav |0.0.7
 ```
 
 ### Calcit 0.29 接口（自 0.0.5 起）
 
 以下示例对应已发布的 `0.0.5` 接口，不能与旧 `0.0.4` 搭配使用。
-本分支的候选 `0.0.7` 对齐 Calcit 0.29.3、Respo 0.16.120、UI 0.7.39 和 JS-FFI 0.2.3；
+本分支的候选 `0.0.8` 对齐 Calcit 0.30.1、Respo 0.16.124、UI 0.8.0 和 JS-FFI 0.2.5；
 发布前不要把候选视为已发布依赖，不使用 main 或提交 hash。
 
 组件示例面向 JavaScript/浏览器；文档检查只静态验证，不在 native 文档 runner 中执行浏览器 CSS 宿主逻辑。
@@ -38,13 +38,13 @@ let
 
 `Op :hydrate-storage` 接收 `Store`，而不是任意 Dynamic。外部持久化 Map 需先用 `decode-map-as data hud-nav.schema/Store` 检查，再构造该事件。
 
-当前已发布版本是 `0.0.6`；源码中的 `0.0.7` 是待发布版本。需要新的依赖组合时应等待正式 tag 发布，不引用 main 或提交 hash。
+当前已发布版本是 `0.0.7`（Calcit 0.29.3）；源码中的 `0.0.8` 是待发布版本。需要新的依赖组合时应等待正式 tag 发布，不引用 main 或提交 hash。
 
-开放 renderer 边界通过现有 Cirru EDN formatter/typed parser 检查两个变体及嵌套 Store，增加每次事件一次序列化/解析成本。它保留 `Op :tab` 和 `Op :hydrate-storage` 两条路径，不把检查成功当成 Respo 整条事件链已经完成静态类型贯通；没有新增改写规则或验证脚本。
+开放 renderer 边界保留现有 Cirru EDN formatter/typed parser，检查两个变体及嵌套 Store，增加每次事件一次序列化/解析成本。正式 0.30.1 的实际回归证实直接 `decode-map-as` 会拒绝合法 `Op :hydrate-storage (Store ...)`，因此当前不能把它当作等价替代；限制已补充至上游 [#2154](https://github.com/calcit-lang/calcit/issues/2154)。本轮不删除合法事件、不添加局部适配层或强转；待已发布 API 支持和真实回归通过后再退役旧桥。不把检查成功当成 Respo 整条事件链已经完成静态类型贯通；没有新增改写规则或验证脚本。
 
 ### Workflow
 
-使用 Calcit 0.29.3、Caps 0.1.1、Node.js 24、Yarn 4.18.0：
+使用正式 Calcit/procs 0.30.1、Caps 0.1.1、Node.js 24、Yarn 4.18.0：
 
 ```sh
 caps --strict --ci
@@ -57,7 +57,9 @@ corepack yarn dev
 
 CI 通过 `VITE_BASE_URL=https://cos-sh.tiye.me/Triadica/hud-nav/` 指定前端 CDN，COS action v1.2.0 的 `public-base-url` 启用内置校验，不额外添加验证脚本。需要 `COS_BUCKET`、`COS_SECRET_ID`、`COS_SECRET_KEY` 和原有 `rsync_private_key`。
 
-PR 只检查与构建，取消过期 PR 检查。COS 仅上传 `dist/assets`，页面继续同步到原服务器目录。生产任务串行完成，不中途取消 rsync；资产上传前和页面发布前分别核对 main HEAD，不承诺检查与部署时刻的原子同步。Respo/UI/js-ffi 均使用正式发布版本。
+PR 只检查与构建，取消过期 PR 检查；PR artifact 使用相对资源路径，下载后可直接从本地 HTTP 服务验收。COS 仅上传 `dist/assets`，页面继续同步到原服务器目录。生产任务串行完成，不中途取消 rsync；资产上传前和页面发布前分别核对 main HEAD，不承诺检查与部署时刻的原子同步。Respo/UI/js-ffi 均使用正式发布版本。
+
+CI 保留 canonical 和 all-defs 检查，补齐公开组件/schema 合同、完整 strict、一个定义附带的事件边界回归及 README 示例静态检查。PR 构建 artifact 仅供验收，不扩大 COS/rsync 凭据范围；不在 native 文档 runner 执行浏览器示例。本轮不执行本地 Caps 或用旧 CLI 编译正式依赖图，正式配对编译由 Linux CI 验证。
 
 ### License
 

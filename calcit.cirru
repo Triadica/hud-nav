@@ -175,5 +175,23 @@
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'hud-nav.schema/Store)
             :args $ [] 'hud-nav.schema/Store 'hud-nav.schema/Op
+          :tests $ [] $ %{} 'TestEntry (:name |operation-boundary)
+            :code $ quote $ let
+                original $ hud-nav.schema/Store :tab :a
+                restored $ hud-nav.schema/Store :tab :c
+              assert= (hud-nav.schema/Store :tab :b)
+                updater original $ parse-cirru-edn-as
+                  format-cirru-edn $ hud-nav.schema/Op :tab :b
+                  , 'hud-nav.schema/Op
+              assert= restored $ updater original $ parse-cirru-edn-as
+                format-cirru-edn $ hud-nav.schema/Op :hydrate-storage restored
+                , 'hud-nav.schema/Op
+              assert= :rejected $ try
+                do
+                  parse-cirru-edn-as
+                    format-cirru-edn $ :: :tab |wrong
+                    , 'hud-nav.schema/Op
+                  , :accepted
+                fn (message) :rejected
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.updater
