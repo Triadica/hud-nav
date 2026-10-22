@@ -126,7 +126,7 @@
                 target $ .query-selector (js-cast js/document dom/DomDocument) |.app
               render! target (comp-container @*store)
                 fn (op)
-                  dispatch! $ decode-map-as op 'hud-nav.schema/Op
+                  dispatch! $ parse-cirru-edn-as (format-cirru-edn op) 'hud-nav.schema/Op
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -175,16 +175,22 @@
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'hud-nav.schema/Store)
             :args $ [] 'hud-nav.schema/Store 'hud-nav.schema/Op
-          :tests $ [] $ %{} 'TestEntry (:name |direct-operation-boundary)
+          :tests $ [] $ %{} 'TestEntry (:name |operation-boundary)
             :code $ quote $ let
                 original $ hud-nav.schema/Store :tab :a
                 restored $ hud-nav.schema/Store :tab :c
               assert= (hud-nav.schema/Store :tab :b)
-                updater original $ decode-map-as (hud-nav.schema/Op :tab :b) 'hud-nav.schema/Op
-              assert= restored $ updater original $ decode-map-as (hud-nav.schema/Op :hydrate-storage restored) 'hud-nav.schema/Op
+                updater original $ parse-cirru-edn-as
+                  format-cirru-edn $ hud-nav.schema/Op :tab :b
+                  , 'hud-nav.schema/Op
+              assert= restored $ updater original $ parse-cirru-edn-as
+                format-cirru-edn $ hud-nav.schema/Op :hydrate-storage restored
+                , 'hud-nav.schema/Op
               assert= :rejected $ try
                 do
-                  decode-map-as (:: :tab |wrong) 'hud-nav.schema/Op
+                  parse-cirru-edn-as
+                    format-cirru-edn $ :: :tab |wrong
+                    , 'hud-nav.schema/Op
                   , :accepted
                 fn (message) :rejected
       :ns $ %{} 'NsEntry (:doc |)

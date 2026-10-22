@@ -4,7 +4,7 @@ Hud Nav component
 
 ### 当前已发布版本
 
-使用者影响：候选 `0.0.8` 同步正式 Calcit `0.30.1` 与正式 UI/Respo/JS-FFI 依赖图。`TabItem`、`Op`、`Store` 和 `comp-hud-nav` 两参数接口不变；demo 在 renderer 的开放回调处直接检查真实 `Op` 后才调用原有具名 dispatcher，不再为事件绕经序列化/解析，也不把 dispatcher 放宽成 Dynamic。候选尚未发布，消费者先固定下方现有正式 tag。
+使用者影响：候选 `0.0.8` 同步正式 Calcit `0.30.1` 与正式 UI/Respo/JS-FFI 依赖图。`TabItem`、`Op`、`Store` 和 `comp-hud-nav` 两参数接口不变；demo 在 renderer 的开放回调处检查真实 `Op` 后才调用原有具名 dispatcher，不把 dispatcher 放宽成 Dynamic。候选尚未发布，消费者先固定下方现有正式 tag。
 
 以下是现有正式 tag 的依赖声明，包含下文 Calcit 0.29 接口。
 
@@ -40,7 +40,7 @@ let
 
 当前已发布版本是 `0.0.7`（Calcit 0.29.3）；源码中的 `0.0.8` 是待发布版本。需要新的依赖组合时应等待正式 tag 发布，不引用 main 或提交 hash。
 
-开放 renderer 边界使用现有 `decode-map-as op 'hud-nav.schema/Op` 直接检查具名 Op 的两个变体及嵌套 Store，保留组件实际发送的 `Op :tab` 和 `Op :hydrate-storage` 两条路径。匿名 `:: :tab` 不再经文本桥重建为具名 Op，会在边界拒绝；自定义事件应按公开合同使用 Op 构造器。非法输入的诊断不再来自文本 parser。不把检查成功当成 Respo 整条事件链已经完成静态类型贯通，也不承诺与旧文本桥对任意非法值的错误消息完全相同；没有新增改写规则或验证脚本。
+开放 renderer 边界保留现有 Cirru EDN formatter/typed parser，检查两个变体及嵌套 Store，增加每次事件一次序列化/解析成本。正式 0.30.1 的实际回归证实直接 `decode-map-as` 会拒绝合法 `Op :hydrate-storage (Store ...)`，因此当前不能把它当作等价替代；限制已补充至上游 [#2154](https://github.com/calcit-lang/calcit/issues/2154)。本轮不删除合法事件、不添加局部适配层或强转；待已发布 API 支持和真实回归通过后再退役旧桥。不把检查成功当成 Respo 整条事件链已经完成静态类型贯通；没有新增改写规则或验证脚本。
 
 ### Workflow
 
