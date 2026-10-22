@@ -49,7 +49,7 @@ jobs:
           calcit docs check-md README.md --snapshot calcit.cirru --failures-only
       - name: Build frontend
         env:
-          VITE_BASE_URL: https://cos-sh.tiye.me/${{ github.repository }}/
+          VITE_BASE_URL: ${{ github.event_name == 'pull_request' && './' || format('https://cos-sh.tiye.me/{0}/', github.repository) }}
         run: yarn build
       - name: Preserve frontend build for review
         if: github.event_name == 'pull_request'

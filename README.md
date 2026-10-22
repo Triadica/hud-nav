@@ -57,7 +57,7 @@ corepack yarn dev
 
 CI 通过 `VITE_BASE_URL=https://cos-sh.tiye.me/Triadica/hud-nav/` 指定前端 CDN，COS action v1.2.0 的 `public-base-url` 启用内置校验，不额外添加验证脚本。需要 `COS_BUCKET`、`COS_SECRET_ID`、`COS_SECRET_KEY` 和原有 `rsync_private_key`。
 
-PR 只检查与构建，取消过期 PR 检查。COS 仅上传 `dist/assets`，页面继续同步到原服务器目录。生产任务串行完成，不中途取消 rsync；资产上传前和页面发布前分别核对 main HEAD，不承诺检查与部署时刻的原子同步。Respo/UI/js-ffi 均使用正式发布版本。
+PR 只检查与构建，取消过期 PR 检查；PR artifact 使用相对资源路径，下载后可直接从本地 HTTP 服务验收。COS 仅上传 `dist/assets`，页面继续同步到原服务器目录。生产任务串行完成，不中途取消 rsync；资产上传前和页面发布前分别核对 main HEAD，不承诺检查与部署时刻的原子同步。Respo/UI/js-ffi 均使用正式发布版本。
 
 CI 保留 canonical 和 all-defs 检查，补齐公开组件/schema 合同、完整 strict、一个定义附带的事件边界回归及 README 示例静态检查。PR 构建 artifact 仅供验收，不扩大 COS/rsync 凭据范围；不在 native 文档 runner 执行浏览器示例。本轮不执行本地 Caps 或用旧 CLI 编译正式依赖图，正式配对编译由 Linux CI 验证。
 
