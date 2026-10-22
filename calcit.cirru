@@ -180,8 +180,8 @@
                 original $ hud-nav.schema/Store :tab :a
                 restored $ hud-nav.schema/Store :tab :c
               assert= (hud-nav.schema/Store :tab :b)
-                updater original $ decode-map-as (:: :tab :b) 'hud-nav.schema/Op
-              assert= restored $ updater original $ decode-map-as (:: :hydrate-storage restored) 'hud-nav.schema/Op
+                updater original $ decode-map-as (hud-nav.schema/Op :tab :b) 'hud-nav.schema/Op
+              assert= restored $ updater original $ decode-map-as (hud-nav.schema/Op :hydrate-storage restored) 'hud-nav.schema/Op
               assert= :rejected $ try
                 do
                   decode-map-as (:: :tab |wrong) 'hud-nav.schema/Op

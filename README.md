@@ -40,7 +40,7 @@ let
 
 当前已发布版本是 `0.0.7`（Calcit 0.29.3）；源码中的 `0.0.8` 是待发布版本。需要新的依赖组合时应等待正式 tag 发布，不引用 main 或提交 hash。
 
-开放 renderer 边界使用现有 `decode-map-as op 'hud-nav.schema/Op` 直接检查两个变体及嵌套 Store，保留 `Op :tab` 和 `Op :hydrate-storage` 两条路径；非法 payload 仍会拒绝，但诊断不再来自文本 parser。不把检查成功当成 Respo 整条事件链已经完成静态类型贯通，也不承诺与旧文本桥对任意非法值的错误消息完全相同；没有新增改写规则或验证脚本。
+开放 renderer 边界使用现有 `decode-map-as op 'hud-nav.schema/Op` 直接检查具名 Op 的两个变体及嵌套 Store，保留组件实际发送的 `Op :tab` 和 `Op :hydrate-storage` 两条路径。匿名 `:: :tab` 不再经文本桥重建为具名 Op，会在边界拒绝；自定义事件应按公开合同使用 Op 构造器。非法输入的诊断不再来自文本 parser。不把检查成功当成 Respo 整条事件链已经完成静态类型贯通，也不承诺与旧文本桥对任意非法值的错误消息完全相同；没有新增改写规则或验证脚本。
 
 ### Workflow
 
