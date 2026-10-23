@@ -17,7 +17,7 @@ assert.deepEqual(parse[1],['format-cirru-edn',['::',':tab','|wrong']]);
 assert.deepEqual(code[4][2][2],['fn',['message'],':rejected']);
 code[1].push(['invalid-op',parse[1]]);
 parse[1]='invalid-op';
-const operations=[['edit','add-test','hud-nav.updater/updater','operation-boundary','--overwrite','--input-format','json-ast','--code',JSON.stringify(['quote',code])]];
+const operations=[['edit','add-test','hud-nav.updater/updater','operation-boundary','--overwrite','--input-format','json-ast','--code',JSON.stringify(code)]];
 writeFileSync('acceptance/before.json',JSON.stringify(before,null,2));
 writeFileSync('acceptance/operations.json',JSON.stringify(operations,null,2));
 const args=['edit','transaction','--file','acceptance/operations.json','--format','json'];
