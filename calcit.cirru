@@ -179,6 +179,7 @@
             :code $ quote $ let
                 original $ hud-nav.schema/Store :tab :a
                 restored $ hud-nav.schema/Store :tab :c
+                invalid-op $ format-cirru-edn $ :: :tab |wrong
               assert= (hud-nav.schema/Store :tab :b)
                 updater original $ parse-cirru-edn-as
                   format-cirru-edn $ hud-nav.schema/Op :tab :b
@@ -187,11 +188,7 @@
                 format-cirru-edn $ hud-nav.schema/Op :hydrate-storage restored
                 , 'hud-nav.schema/Op
               assert= :rejected $ try
-                do
-                  parse-cirru-edn-as
-                    format-cirru-edn $ :: :tab |wrong
-                    , 'hud-nav.schema/Op
-                  , :accepted
+                do (parse-cirru-edn-as invalid-op 'hud-nav.schema/Op) :accepted
                 fn (message) :rejected
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.updater

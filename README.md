@@ -2,6 +2,8 @@
 Hud Nav component
 ----
 
+使用者影响：本轮评审修正仅调整已有 `operation-boundary` 回归测试，将非法事件的格式化移到拒绝断言的 `try` 之外。格式化失败现在会使测试失败，不能再冒充 typed parser 正确拒绝；原具名事件与 hydrate 正例、拒绝预期均保留。应用实现、接口、依赖和部署配置不变，不新增测试脚本，也不代表候选 0.0.8 已发布。
+
 ### 当前已发布版本
 
 使用者影响：候选 `0.0.8` 同步正式 Calcit `0.30.1` 与正式 UI/Respo/JS-FFI 依赖图。`TabItem`、`Op`、`Store` 和 `comp-hud-nav` 两参数接口不变；demo 在 renderer 的开放回调处检查真实 `Op` 后才调用原有具名 dispatcher，不把 dispatcher 放宽成 Dynamic。候选尚未发布，消费者先固定下方现有正式 tag。
