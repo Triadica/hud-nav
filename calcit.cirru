@@ -28,13 +28,12 @@
                             {} $ :color :white
                         <> $ :label item
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] 'Tag $ :: 'List 'hud-nav.schema/TabItem
+          :schema $ quote $ Fn Tag (List hud-nav.schema/TabItem) (-> respo.schema/Component)
         'style-nav $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-nav
             {} $ |& $ {} (:position :absolute) (:top 12)
           :examples $ []
-          :schema $ :: 'String
+          :schema $ quote String
         'style-tab $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-tab
             {}
@@ -48,7 +47,7 @@
                 :background-color $ hsl 0 0 0 0.5
                 :color :white
           :examples $ []
-          :schema $ :: 'String
+          :schema $ quote String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.comp
           :require (respo-ui.css :as css)
@@ -66,8 +65,7 @@
                 {} $ :class-name $ str-spaced css/global css/row
                 comp-hud-nav tab schema/tabs
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] 'hud-nav.schema/Store
+          :schema $ quote $ Fn hud-nav.schema/Store (-> respo.schema/Component)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.comp.container
           :require (respo-ui.css :as css)
@@ -84,12 +82,12 @@
               get-env |mode
               , .unwrap-or |release
           :examples $ []
-          :schema $ :: 'Bool
+          :schema $ quote Bool
         'site $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def site
             {} $ :storage-key |workflow
           :examples $ []
-          :schema $ :: 'Map 'Tag 'String
+          :schema $ quote $ Map Tag String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.config
     'hud-nav.main $ %{} 'FileEntry
@@ -97,40 +95,31 @@
         '*store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *store schema/store
           :examples $ []
-          :schema $ :: 'Ref 'hud-nav.schema/Store
+          :schema $ quote $ Ref hud-nav.schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             reset! *store $ updater @*store op
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'hud-nav.schema/Op
+          :schema $ quote $ Fn hud-nav.schema/Op (-> Unit)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (render-app!)
             add-watch! *store :changes $ fn (s prev) (render-app!)
             println "|App started."
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! () (render-app!)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             let
                 target $ .query-selector (js-cast js/document dom/DomDocument) |.app
-              render! target (comp-container @*store)
-                fn (op)
-                  dispatch! $ parse-cirru-edn-as (format-cirru-edn op) 'hud-nav.schema/Op
+              render! target (comp-container @*store) dispatch!
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.main
           :require
@@ -144,24 +133,24 @@
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op (:tab 'Tag) (:hydrate-storage 'hud-nav.schema/Store)
           :examples $ []
-          :schema $ :: 'EnumDef
+          :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store (:tab 'Tag)
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
         'TabItem $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct TabItem (:id 'Tag) (:label 'String)
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store (Store :tab :a)
           :examples $ []
-          :schema $ :: 'hud-nav.schema/Store
+          :schema $ quote hud-nav.schema/Store
         'tabs $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def tabs
             [] (TabItem :id :a :label |A) (TabItem :id :b :label |B) (TabItem :id :c :label |C)
           :examples $ []
-          :schema $ :: 'List 'hud-nav.schema/TabItem
+          :schema $ quote $ List hud-nav.schema/TabItem
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.schema
     'hud-nav.updater $ %{} 'FileEntry
@@ -173,8 +162,7 @@
               (:hydrate-storage data) data
               _ store
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'hud-nav.schema/Store)
-            :args $ [] 'hud-nav.schema/Store 'hud-nav.schema/Op
+          :schema $ quote $ Fn hud-nav.schema/Store hud-nav.schema/Op (-> hud-nav.schema/Store)
           :tests $ [] $ %{} 'TestEntry (:name |operation-boundary)
             :code $ quote $ let
                 original $ hud-nav.schema/Store :tab :a

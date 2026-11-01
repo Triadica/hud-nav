@@ -1,28 +1,20 @@
+# HUD Nav
 
-Hud Nav component
-----
+Respo 的标签导航组件，演示站：http://repo.tiye.me/Triadica/hud-nav/ 。
 
-使用者影响：本轮评审修正仅调整已有 `operation-boundary` 回归测试，将非法事件的格式化移到拒绝断言的 `try` 之外。格式化失败现在会使测试失败，不能再冒充 typed parser 正确拒绝；原具名事件与 hydrate 正例、拒绝预期均保留。应用实现、接口、依赖和部署配置不变，不新增测试脚本，也不代表候选 0.0.8 已发布。
+## 使用者需要注意
 
-### 当前已发布版本
+本分支准备 `0.0.10`，配对正式 Calcit / JavaScript runtime **0.32.1**、Respo **0.17.1**、UI **0.9.0** 与 JS FFI **0.2.9**；候选尚未发布，现有正式 tag 是 `0.0.9`（Calcit 0.31.0）。不要混用工具链或将候选版本当成已发布依赖。UI 自身固定的 Router 预发布传递依赖保留，不使用 main/hash。
 
-使用者影响：候选 `0.0.9` 同步正式 Calcit `0.31.0` 与配套已发布依赖图。`TabItem`、`Op`、`Store` 和 `comp-hud-nav` 两参数接口不变；demo 在 renderer 的开放回调处检查真实 `Op` 后才调用原有具名 dispatcher，不把 dispatcher 放宽成 Dynamic。0.0.9 候选尚未发布，消费者先固定下方现有正式 tag。
+`comp-hud-nav` 仍接收当前 Tag 和 `List<TabItem>`，点击派发具名 `Op :tab next`；`TabItem`、`Op`、`Store` 的布局和 hydration wire 格式不变。消费者继续把 entry 的 `dispatch-op` 槽绑定到 `hud-nav.schema/Op`，在 updater 匹配 `(:tab next)`。
 
-以下是现有正式 tag 的依赖声明，包含下文 Calcit 0.29 接口。
+Respo 0.17.1 的 renderer 回调已使用这个类型槽，Demo 因而直接传入 `dispatch!`，删除每次点击时多余的 Cirru EDN 格式化/解析。这里传递的是具名、已检查的内存事件，不把外部 Map、未知值或同名外部类型当成合法 Op。需要兼容旧 renderer 的消费者不要单独照搬这个简化。
 
-```cirru
-{}
-  :dependencies $ {}
-    |Triadica/hud-nav |0.0.7
-```
+`Op :hydrate-storage` 仍要求 `Store`。外部数据必须先完成受检解码，再构造事件；原附带测试继续验证正常 tab、带 Store 的 hydrate 和非法 payload 拒绝，不撤销外部数据边界。此变化不是对上游 [#2154](https://github.com/calcit-lang/calcit/issues/2154) 解码能力的通用修复。
 
-### Calcit 0.29 接口（自 0.0.5 起）
+## 组件用法
 
-以下示例对应已发布的 `0.0.5` 接口，不能与旧 `0.0.4` 搭配使用。
-本分支的候选 `0.0.9` 对齐正式 Calcit 0.31.0、已发布 Respo 0.17.0-alpha.4、UI 0.9.0-alpha.4 和 JS-FFI 0.2.7；
-发布前不要把候选视为已发布依赖，不使用 main 或提交 hash。
-
-组件示例面向 JavaScript/浏览器；文档检查只静态验证，不在 native 文档 runner 中执行浏览器 CSS 宿主逻辑。
+下面展示组件接口，依赖应按项目使用的 Calcit 版本选择已发布 tag。文档片段只做静态检查，不在 native runner 执行浏览器 CSS 宿主。
 
 ```cirru.no-run
 ns app.main $ :require
@@ -36,17 +28,9 @@ let
   comp-hud-nav :a tabs
 ```
 
-`comp-hud-nav` 接收当前 Tag 和 `List<TabItem>`，点击会发送 `Op :tab next` 事件；不再接收第三个回调参数。消费项目将 `dispatch-op` 类型槽绑定到 `hud-nav.schema/Op`，在 updater 中匹配 `(:tab next)`。
+## 开发与验证
 
-`Op :hydrate-storage` 接收 `Store`，而不是任意 Dynamic。外部持久化 Map 需先用 `decode-map-as data hud-nav.schema/Store` 检查，再构造该事件。
-
-当前已发布版本是 `0.0.7`（Calcit 0.29.3）；源码中的 `0.0.9` 是待发布版本。需要新的依赖组合时应等待正式 tag 发布，不引用 main 或提交 hash。
-
-开放 renderer 边界保留现有 Cirru EDN formatter/typed parser，检查两个变体及嵌套 Store，增加每次事件一次序列化/解析成本。正式 0.30.1 的实际回归证实直接 `decode-map-as` 会拒绝合法 `Op :hydrate-storage (Store ...)`，因此当前不能把它当作等价替代；限制已补充至上游 [#2154](https://github.com/calcit-lang/calcit/issues/2154)。本轮不删除合法事件、不添加局部适配层或强转；待已发布 API 支持和真实回归通过后再退役旧桥。不把检查成功当成 Respo 整条事件链已经完成静态类型贯通；没有新增改写规则或验证脚本。
-
-### Workflow
-
-使用正式 Calcit/procs 0.31.0、Caps 0.1.1、Node.js 24、Yarn 4.18.0：
+需要 Node.js 24、Yarn 4.18.0、官方 Calcit 0.32.1 和 Caps 0.1.1：
 
 ```sh
 caps --strict --ci
@@ -55,14 +39,16 @@ caps verify --toolchain
 corepack yarn dev
 ```
 
-持续编译可另开终端执行 `corepack yarn watch`。`corepack yarn build` 生成演示站，`release` 只是构建别名，不执行模块发布。只维护 `calcit.cirru` / `deps.cirru`；`js-out/` 不提交。
+`yarn watch` 可在另一终端持续编译；`yarn build` / `yarn release` 只构建演示站，不发布模块。只维护 `calcit.cirru` / `deps.cirru`，`js-out/` 和 `dist/` 不入库。包龄使用已授权的一小时策略，无单包豁免。
 
-CI 通过 `VITE_BASE_URL=https://cos-sh.tiye.me/Triadica/hud-nav/` 指定前端 CDN，COS action v1.2.0 的 `public-base-url` 启用内置校验，不额外添加验证脚本。需要 `COS_BUCKET`、`COS_SECRET_ID`、`COS_SECRET_KEY` 和原有 `rsync_private_key`。
+CI 保留 canonical、全部定义、公开组件/schema、完整 strict、原事件边界测试和 README 静态检查，不放宽类型门禁或增加测试 runner。实际浏览器交互与原 Linux CI 的结果以 PR 描述为准。
 
-PR 只检查与构建，取消过期 PR 检查；PR artifact 使用相对资源路径，下载后可直接从本地 HTTP 服务验收。COS 仅上传 `dist/assets`，页面继续同步到原服务器目录。生产任务串行完成，不中途取消 rsync；资产上传前和页面发布前分别核对 main HEAD，不承诺检查与部署时刻的原子同步。Respo/UI 使用与正式 0.31.0 配套的已发布 alpha tag，JS-FFI 使用正式 tag；不使用 main/hash。
+## 前端部署
 
-CI 保留 canonical 和 all-defs 检查，补齐公开组件/schema 合同、完整 strict、一个定义附带的事件边界回归及 README 示例静态检查。PR 构建 artifact 仅供验收，不扩大 COS/rsync 凭据范围；不在 native 文档 runner 执行浏览器示例。本轮使用本地固定正式 CLI 0.31.0 验证 caps strict、工具链配对、immutable 安装、156 个全定义、公开合同、完整 strict、原事件边界测试及文档检查；实际 Demo A/B/C 切换与刷新验收通过。组件源码与原门禁未修改，远端 CI 以 PR 工作流为准。
+PR 只检查、构建并保存相对资源路径的 artifact，不上传 COS 或部署生产。main 的原流程仅上传 `dist/assets` 到 `https://cos-sh.tiye.me/Triadica/hud-nav/assets/`，使用 COS Action 1.2.0 内置公开 URL 校验，再按原路径同步页面；不额外复制校验脚本，不涉及后端。
 
-### License
+需要原 `COS_BUCKET`、`COS_SECRET_ID`、`COS_SECRET_KEY` 和 `rsync_private_key`。生产上传与页面发布前分别核对 main HEAD，队列不取消执行中的生产任务；这些检查不承诺原子部署。Actions 按维护者授权使用精确正式 tag，接受 tag 可移动风险，原触发条件、权限和部署路径保持。
+
+## License
 
 MIT
