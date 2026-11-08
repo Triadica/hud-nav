@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'hud-nav.main/main!) (:mode :js) (:reload-fn 'hud-nav.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/
-      :type-slots $ {} $ :dispatch-op |hud-nav.schema/Op
+      :type-slots $ {} $ :dispatch-op 'hud-nav.schema/Op
   :files $ {}
     'hud-nav.comp $ %{} 'FileEntry
       :defs $ {}
@@ -14,18 +14,22 @@
           :code $ quote $ defcomp comp-hud-nav (tab tabs)
             div
               {} $ :class-name style-nav
-              list-> ({})
-                -> tabs $ map $ fn (item)
+              keyed-> ({})
+                map tabs $ fn (item)
                   let
-                      t $ :id item
-                    [] (to-string t)
+                      id $ :id item
+                    keyed-element (to-string id)
                       div
                         {}
                           :class-name $ str-spaced style-tab css/font-fancy!
-                          :on-click $ fn (e d!)
-                            d! $ Op :tab t
-                          :style $ if (= tab t)
-                            {} $ :color :white
+                          :on-click $ fn (_event dispatch!)
+                            hint-fn $ Fn respo.schema/RespoEvent
+                              Fn hud-nav.schema/Op $ -> Unit
+                              -> Unit
+                            dispatch! $ Op :tab id
+                          :style $ if (= tab id)
+                            Option :some $ {} $ :color :white
+                            Option :none
                         <> $ :label item
           :examples $ []
           :schema $ quote $ Fn Tag (List hud-nav.schema/TabItem) (-> respo.schema/Component)
@@ -53,7 +57,7 @@
           :require (respo-ui.css :as css)
             respo.css :refer $ defstyle
             respo.util.format :refer $ hsl
-            respo.core :refer $ defcomp <> div list->
+            respo.core :refer $ defcomp <> div keyed-> keyed-element
             hud-nav.schema :refer $ Op TabItem
     'hud-nav.comp.container $ %{} 'FileEntry
       :defs $ {} $ 'comp-container
@@ -131,15 +135,15 @@
     'hud-nav.schema $ %{} 'FileEntry
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defenum Op (:tab 'Tag) (:hydrate-storage 'hud-nav.schema/Store)
+          :code $ quote $ defenum Op (:tab Tag) (:hydrate-storage hud-nav.schema/Store)
           :examples $ []
           :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Store (:tab 'Tag)
+          :code $ quote $ defstruct Store (:tab Tag)
           :examples $ []
           :schema $ quote StructDef
         'TabItem $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct TabItem (:id 'Tag) (:label 'String)
+          :code $ quote $ defstruct TabItem (:id Tag) (:label String)
           :examples $ []
           :schema $ quote StructDef
         'store $ %{} 'CodeEntry (:doc |)
