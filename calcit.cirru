@@ -119,19 +119,20 @@
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            let
-                target $ .query-selector (js-cast js/document dom/DomDocument) |.app
-              render! target (comp-container @*store) dispatch!
+            render-with!
+              .unwrap $ dom/query-selector |.app
+              fn () $ comp-container @*store
+              , dispatch!
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.main
           :require
-            respo.core :refer $ render!
+            respo.core :refer $ render-with!
             hud-nav.comp.container :refer $ comp-container
             hud-nav.updater :refer $ updater
             hud-nav.schema :as schema
-            respo.dom :as dom
+            respo.ffi.browser :as dom
     'hud-nav.schema $ %{} 'FileEntry
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
