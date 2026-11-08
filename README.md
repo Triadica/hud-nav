@@ -4,13 +4,11 @@ Respo 的标签导航组件，演示站：http://repo.tiye.me/Triadica/hud-nav/ 
 
 ## 使用者需要注意
 
-本分支准备 `0.0.10`，配对正式 Calcit / JavaScript runtime **0.32.1**、Respo **0.17.1**、UI **0.9.0** 与 JS FFI **0.2.9**；候选尚未发布，现有正式 tag 是 `0.0.9`（Calcit 0.31.0）。不要混用工具链或将候选版本当成已发布依赖。UI 自身固定的 Router 预发布传递依赖保留，不使用 main/hash。
+当前源码配对正式 Calcit / JavaScript runtime **0.37.0**、Respo **0.19.5**、UI **0.15.2** 与 JS FFI **0.2.13**。消费者升级时需要统一依赖并重新生成 JS。源码声明为 `0.0.10`，选用已发布依赖时请核对 Git tag。
 
-`comp-hud-nav` 仍接收当前 Tag 和 `List<TabItem>`，点击派发具名 `Op :tab next`；`TabItem`、`Op`、`Store` 的布局和 hydration wire 格式不变。消费者继续把 entry 的 `dispatch-op` 槽绑定到 `hud-nav.schema/Op`，在 updater 匹配 `(:tab next)`。
+`comp-hud-nav` 仍接收当前 Tag 和 `List<TabItem>`。点击派发具名 `Op :tab next`，消费者继续把 entry 的 `dispatch-op` 槽绑定到 `hud-nav.schema/Op`。组件内部使用 Respo 的 `ChildPair` 渲染有键子项，并通过 `Option` 表达未选中标签没有内联颜色。标签顺序、字符串键和选中颜色保持原样。
 
-Respo 0.17.1 的 renderer 回调已使用这个类型槽，Demo 因而直接传入 `dispatch!`，删除每次点击时多余的 Cirru EDN 格式化/解析。这里传递的是具名、已检查的内存事件，不把外部 Map、未知值或同名外部类型当成合法 Op。需要兼容旧 renderer 的消费者不要单独照搬这个简化。
-
-`Op :hydrate-storage` 仍要求 `Store`。外部数据必须先完成受检解码，再构造事件；原附带测试继续验证正常 tab、带 Store 的 hydrate 和非法 payload 拒绝，不撤销外部数据边界。此变化不是对上游 [#2154](https://github.com/calcit-lang/calcit/issues/2154) 解码能力的通用修复。
+`Op :hydrate-storage` 仍携带 `Store`，原附带测试继续覆盖切换标签、恢复 Store 和拒绝非法 payload。
 
 ## 组件用法
 
@@ -30,7 +28,7 @@ let
 
 ## 开发与验证
 
-需要 Node.js 24、Yarn 4.18.0、官方 Calcit 0.32.1 和 Caps 0.1.1：
+需要 Node.js 24、Yarn 4.18.0、官方 Calcit 0.37.0 和 Caps 0.1.1：
 
 ```sh
 caps --strict --ci
