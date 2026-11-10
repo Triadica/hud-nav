@@ -4,7 +4,7 @@ Respo 的标签导航组件，演示站：http://repo.tiye.me/Triadica/hud-nav/ 
 
 ## 使用者需要注意
 
-当前源码配对正式 Calcit / JavaScript runtime **0.38.0**、Respo **0.19.5**、UI **0.15.2** 与 JS FFI **0.2.13**。消费者升级时需要统一依赖并重新生成 JS。源码声明为候选 `0.0.11`，选用已发布依赖时请核对 Git tag。
+当前源码配对正式 Calcit / JavaScript runtime **0.40.0**、Respo **0.19.5**、UI **0.15.2** 与 JS FFI **0.2.13**。消费者升级时需要统一依赖并重新生成 JS。源码声明为候选 `0.0.11`，选用已发布依赖时请核对 Git tag。
 
 `comp-hud-nav` 仍接收当前 Tag 和 `List<TabItem>`。点击派发具名 `Op :tab next`，消费者继续把 entry 的 `dispatch-op` 槽绑定到 `hud-nav.schema/Op`。组件内部使用 Respo 的 `ChildPair` 渲染有键子项，并通过 `Option` 表达未选中标签没有内联颜色。标签顺序、字符串键和选中颜色保持原样。
 
@@ -28,7 +28,7 @@ let
 
 ## 开发与验证
 
-需要 Node.js 24、Yarn 4.18.0、官方 Calcit 0.38.0 和 Caps 0.1.1：
+需要 Node.js 24、Yarn 4.18.0、官方 Calcit 0.40.0 和 Caps 0.1.1：
 
 ```sh
 caps --strict --ci
