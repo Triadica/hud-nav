@@ -28,11 +28,11 @@
                               -> Unit
                             dispatch! $ Op :tab id
                           :style $ if (= tab id)
-                            Option :some $ {} $ :color :white
-                            Option :none
+                            Some $ {} $ :color :white
+                            , None
                         <> $ :label item
           :examples $ []
-          :schema $ quote $ Fn Tag (List hud-nav.schema/TabItem) (-> respo.schema/Component)
+          :schema $ quote $ Fn Tag (List TabItem) (-> respo.schema/Component)
         'style-nav $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-nav
             {} $ |& $ {} (:position :absolute) (:top 12)
@@ -69,7 +69,7 @@
                 {} $ :class-name $ str-spaced css/global css/row
                 comp-hud-nav tab schema/tabs
           :examples $ []
-          :schema $ quote $ Fn hud-nav.schema/Store (-> respo.schema/Component)
+          :schema $ quote $ Fn Store (-> respo.schema/Component)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.comp.container
           :require (respo-ui.css :as css)
@@ -99,13 +99,13 @@
         '*store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *store schema/store
           :examples $ []
-          :schema $ quote $ Ref hud-nav.schema/Store
+          :schema $ quote $ Ref schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             reset! *store $ updater @*store op
             , &unit
           :examples $ []
-          :schema $ quote $ Fn hud-nav.schema/Op (-> Unit)
+          :schema $ quote $ Fn schema/Op (-> Unit)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (render-app!)
             add-watch! *store :changes $ fn (s prev) (render-app!)
@@ -150,12 +150,12 @@
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store (Store :tab :a)
           :examples $ []
-          :schema $ quote hud-nav.schema/Store
+          :schema $ quote Store
         'tabs $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def tabs
             [] (TabItem :id :a :label |A) (TabItem :id :b :label |B) (TabItem :id :c :label |C)
           :examples $ []
-          :schema $ quote $ List hud-nav.schema/TabItem
+          :schema $ quote $ List TabItem
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.schema
     'hud-nav.updater $ %{} 'FileEntry
