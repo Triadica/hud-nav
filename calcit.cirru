@@ -24,7 +24,7 @@
                           :class-name $ str-spaced style-tab css/font-fancy!
                           :on-click $ fn (_event dispatch!)
                             hint-fn $ Fn respo.schema/RespoEvent
-                              Fn hud-nav.schema/Op $ -> Unit
+                              Fn Op $ -> Unit
                               -> Unit
                             dispatch! $ Op :tab id
                           :style $ if (= tab id)
