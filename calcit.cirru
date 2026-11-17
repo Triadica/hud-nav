@@ -116,7 +116,7 @@
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! () (render-app!)
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi :state)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render-with!
@@ -124,7 +124,7 @@
               fn () $ comp-container @*store
               , dispatch!
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi :state)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns hud-nav.main
           :require
